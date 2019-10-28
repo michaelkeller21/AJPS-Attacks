@@ -1,16 +1,22 @@
+from gen import get_mersenne, get_sk
+from random import randrange
 from Crypto.Util import number
-bits = 8
 
+bits = 16
+
+p = 0
+lam = 8
+h = randrange(0, 2**bits)
 n = number.getPrime(bits)
-z = 2**2
 
-p = 2**n - 1
+n, h = get_mersenne(lam, bits)
 
-x = 10 % p
+sk = get_sk(n, h)
+f, g = sk
+pk = f / g
+sk = g
 
-y = 2**z
 
-x*y
 
-print(x.to_bytes(2, byteorder="little"))
-print((x*y).to_bytes(2, byteorder="little"))
+
+print(n, h)
