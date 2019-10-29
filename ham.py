@@ -1,13 +1,14 @@
-def ham(x):
-    '''Accepts a byte object containing some number of bits
-    and returns its hamming weight'''
+def ham(x, n):
+    """Accepts a byte object containing some number of bits
+    and returns its hamming weight"""
     acc = []
 
     for byte in x:
         count = 0
-        while byte:
+        while byte and n:
             count += (byte & 1)
             byte >>= 1
+            n -= 1
 
         acc.append(count)
     return sum(acc)

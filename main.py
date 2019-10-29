@@ -1,22 +1,18 @@
-from gen import get_mersenne, get_sk
+from gen import get_mersenne_exp, get_f_g
 from random import randrange
 from Crypto.Util import number
 
-bits = 16
+bits = 4096
+lam = 100
 
-p = 0
-lam = 8
-h = randrange(0, 2**bits)
-n = number.getPrime(bits)
+print("looking for appropriate mersenne number and hamming weight constraint...")
+n, h = get_mersenne_exp(lam, bits)
+p = 2**n-1
 
-n, h = get_mersenne(lam, bits)
+print("found mersenne and hamming weight constraint: {}, {}\ngenerating secret key (f, g) from key space...".format(bin(p), h))
+f, g = get_f_g(n, h)
 
-sk = get_sk(n, h)
-f, g = sk
-pk = f / g
+pk = (f // g)
 sk = g
 
-
-
-
-print(n, h)
+print("keys generated:\nsk: {}\npk: {}".format(sk, pk))
