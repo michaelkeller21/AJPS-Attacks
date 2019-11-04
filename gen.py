@@ -2,7 +2,7 @@ from ham import ham
 from Crypto.Util import number
 from random import randrange
 from util import bitlength, nCr
-
+from math import ceil
 
 def get_f_g(n, h):
     space = get_sk_space(n, h)
@@ -19,6 +19,7 @@ def get_f_g(n, h):
 #     and have a hamming weight less than or equal to h"""
 #     return [i for i in range(2**n-1) if bitlength(i) == n and ham(i.to_bytes(n//8+1, byteorder="big"), n) <= h]
 
+
 # needs to be updated to include all bit strings with hamming weight strictly < h
 def get_sk_space(n, h):
     space = []
@@ -32,7 +33,84 @@ def get_sk_space(n, h):
     return space
 
 
-def get_mersenne_exp(lam, bits):
+# def get_sks(n ,h):
+#     a1, a2, b1, b2 = [randrange(0, n) for _ in range(4)]
+#     a = b = [0] * n
+#     a[a1], a[a2], b[b1], b[b2] = [1] * 4
+#     a, b = ''.join(str(j) for j in a), ''.join(str(j) for j in b)
+#     a, b = int(a, 2), int(b, 2)
+#     return a, b
+
+# def get_sks(n, h):
+#     a1, a2, b1, b2 = [randrange(0, n) for _ in range(4)]
+#     a = b = '0' * n
+#     a[a1], a[a2], b[b1], b[b2] = [1] * 4
+#     a, b = int(a, 2), int(b, 2)
+#     return a, b
+
+
+def get_sks(n, h, bits, num):
+
+    acc = []
+    max_list_size = 536870912
+
+    zeros = bytearray(bits//8)
+
+    for _ in range(num):
+
+        # idxs = [randrange(0, n) for _ in range(h)]
+        idxs = [randrange(0, n), randrange(0, n)]
+
+        n_strings = (n // max_list_size) + 1
+        print('\n\n\n')
+        print(n_strings, len(str(n)))
+        string_array = [zeros]*n_strings
+
+        for idx in idxs:
+
+                string_idx = idx // max_list_size
+                bit_idx = idx % max_list_size
+                byte_idx = string_idx // 8
+
+                # index bytestring for byte
+                print('\n\n\n\n')
+                print(string_idx, bit_idx, byte_idx)
+
+                byte = string_array[string_idx][byte_idx]
+
+                # turn byte into list representation of bits
+                byte = list(format(byte, '08b'))
+
+                # set random string representation bit
+                byte[bit_idx] = 1
+
+                # get string rep, turn string into int
+                byte = ''.join(str(j) for j in byte)
+                byte = int(byte, 2)
+
+                # replace modified byte
+                string_array[string_idx][byte_idx] = byte
+
+        acc.append(int.from_bytes(a, byteorder="big", signed=False))
+
+    return acc
+
+
+def get_n(lam, bits):
+    n = number.getPrime(bits)
+    h = randrange(0, 2**bits-1)
+
+    # while nCr(n, h) < 2**lam and 4*h**2 >= n < 16*h**2:
+    while 10*h**2 >= n < 16*h**2:
+        n = number.getPrime(bits)
+        h = randrange(0, 2**bits-1)
+
+    return n, h
+
+def get_n_bit_int(n):
+    return number.getRandomNBitInteger(n)
+
+def get_n_basic(lam, bits):
     n = number.getPrime(bits)
     h = randrange(0, 2**bits-1)
 
