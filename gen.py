@@ -1,17 +1,16 @@
-from ham import ham
 from Crypto.Util import number
 from random import randrange
-from util import bitlength, nCr
-from math import ceil
 
-def get_f_g(n, h):
-    space = get_sk_space(n, h)
 
-    # independent sampling of space
-    f, g = space[randrange(0, len(space) - 1)], space[randrange(0, len(space) - 1)]
-    f, g = int(f, 2), int(g, 2)
 
-    return f, g
+# def get_f_g(n, h):
+#     space = get_sk_space(n, h)
+#
+#     # independent sampling of space
+#     f, g = space[randrange(0, len(space) - 1)], space[randrange(0, len(space) - 1)]
+#     f, g = int(f, 2), int(g, 2)
+#
+#     return f, g
 
 
 # def get_sk_space(n, h):
@@ -21,19 +20,19 @@ def get_f_g(n, h):
 
 
 # needs to be updated to include all bit strings with hamming weight strictly < h
-def get_sk_space(n, h):
-    space = []
-    for i in range(n):
-        bits = [0] * n
-        bits[i] = 1
-        for k in range(i+1, n):
-            bits[k] = 1
-            space.append(''.join(str(j) for j in bits))
-            bits[k] = 0
-    return space
+# def get_sk_space(n, h):
+#     space = []
+#     for i in range(n):
+#         bits = [0] * n
+#         bits[i] = 1
+#         for k in range(i+1, n):
+#             bits[k] = 1
+#             space.append(''.join(str(j) for j in bits))
+#             bits[k] = 0
+#     return space
 
 
-# def get_sks(n ,h):
+# def get_nbit_ham_strings(n ,h):
 #     a1, a2, b1, b2 = [randrange(0, n) for _ in range(4)]
 #     a = b = [0] * n
 #     a[a1], a[a2], b[b1], b[b2] = [1] * 4
@@ -41,7 +40,8 @@ def get_sk_space(n, h):
 #     a, b = int(a, 2), int(b, 2)
 #     return a, b
 
-# def get_sks(n, h):
+
+# def get_nbit_ham_strings(n, h):
 #     a1, a2, b1, b2 = [randrange(0, n) for _ in range(4)]
 #     a = b = '0' * n
 #     a[a1], a[a2], b[b1], b[b2] = [1] * 4
@@ -49,33 +49,25 @@ def get_sk_space(n, h):
 #     return a, b
 
 
-def get_sks(n, h, bits, num):
+def get_nbit_ham_strings(n, h, num):
 
     acc = []
-    max_list_size = 536870912
-
-    zeros = bytearray(bits//8)
+    max_list_size = 153012498
+    zeros = bytearray(n//8)
 
     for _ in range(num):
 
-        # idxs = [randrange(0, n) for _ in range(h)]
-        idxs = [randrange(0, n), randrange(0, n)]
+        idxs = [randrange(0, n) for _ in range(h)]
 
         n_strings = (n // max_list_size) + 1
-        print('\n\n\n')
-        print(n_strings, len(str(n)))
         string_array = [zeros]*n_strings
 
         for idx in idxs:
-
                 string_idx = idx // max_list_size
-                bit_idx = idx % max_list_size
-                byte_idx = string_idx // 8
+                bit_idx = idx % 8
+                byte_idx = (idx - (len(string_array)-1) * max_list_size) // 8
 
                 # index bytestring for byte
-                print('\n\n\n\n')
-                print(string_idx, bit_idx, byte_idx)
-
                 byte = string_array[string_idx][byte_idx]
 
                 # turn byte into list representation of bits
@@ -91,7 +83,11 @@ def get_sks(n, h, bits, num):
                 # replace modified byte
                 string_array[string_idx][byte_idx] = byte
 
-        acc.append(int.from_bytes(a, byteorder="big", signed=False))
+        # from list of byte strings to single int
+        if string_idx:
+            print("incorrect value for nbit strings returned")
+        strings_as_int = int.from_bytes(string_array.pop(), byteorder="big")
+        acc.append(strings_as_int)
 
     return acc
 
@@ -107,8 +103,10 @@ def get_n(lam, bits):
 
     return n, h
 
+
 def get_n_bit_int(n):
     return number.getRandomNBitInteger(n)
+
 
 def get_n_basic(lam, bits):
     n = number.getPrime(bits)
