@@ -1,5 +1,6 @@
 from Crypto.Util import number
 from random import randrange
+from math import floor
 
 
 
@@ -53,13 +54,13 @@ def get_nbit_ham_strings(n, h, num):
 
     acc = []
     max_list_size = 153012498
-    zeros = bytearray(n//8)
+    n_strings = (n // max_list_size) + 1
 
     for _ in range(num):
 
-        idxs = [randrange(0, n) for _ in range(h)]
+        idxs = [randrange(0, n-1) for _ in range(h)]
 
-        n_strings = (n // max_list_size) + 1
+        zeros = bytearray(n//8)
         string_array = [zeros]*n_strings
 
         for idx in idxs:
