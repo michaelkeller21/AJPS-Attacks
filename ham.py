@@ -13,13 +13,12 @@ def ham(x, n):
         acc.append(count)
     return sum(acc)
 
-
-def bxor(b1, b2):
-    result = bytearray(b1)
-    for i, b in enumerate(b2):
-        result[i] ^= b
-    return bytes(result)
-
+def ham2(a):
+    acc = 0
+    while a:
+        if a & 1: acc+= 1
+        a >>= 1
+    return acc
 
 def hamdist(x, y):
-    return ham(bxor(x, y))
+    return ham2(x ^ y)
