@@ -1,7 +1,8 @@
 from Crypto.Util import number
 from random import randrange
 from math import floor
-
+from ham import ham2
+import random
 
 
 # def get_f_g(n, h):
@@ -66,23 +67,26 @@ def get_nbit_ham_strings(n, h, num):
         for idx in idxs:
                 string_idx = idx // max_list_size
                 bit_idx = idx % 8
-                byte_idx = (idx - (len(string_array)-1) * max_list_size) // 8
+                byte_idx = random.randrange(n//8)
 
                 # index bytestring for byte
                 byte = string_array[string_idx][byte_idx]
 
                 # turn byte into list representation of bits
-                byte = list(format(byte, '08b'))
+                byte_list = list(format(byte, '08b'))
 
                 # set random string representation bit
-                byte[bit_idx] = 1
+                if byte_list[bit_idx] == '1':
+                    byte_list[bit_idx - 1] = 1
+                else:
+                    byte_list[bit_idx % 8] = 1
 
                 # get string rep, turn string into int
-                byte = ''.join(str(j) for j in byte)
-                byte = int(byte, 2)
+                byte_list = ''.join(str(j) for j in byte_list)
+                new_byte = int(byte_list, 2)
 
                 # replace modified byte
-                string_array[string_idx][byte_idx] = byte
+                string_array[string_idx][byte_idx] = new_byte
 
         # from list of byte strings to single int
         if string_idx:
@@ -91,6 +95,15 @@ def get_nbit_ham_strings(n, h, num):
         acc.append(strings_as_int)
 
     return acc
+
+def get_random_int_of_hamming_weight_h(h, n):
+    a = 0
+    for i in range(h):
+        bit_mask = 1 << randrange(n)
+        while a & bit_mask:
+            bit_mask = 1 << randrange(n)
+        a = a | bit_mask
+    return a
 
 
 def get_n(lam, bits):
@@ -119,3 +132,8 @@ def get_n_basic(lam, bits):
         h = randrange(0, 2**bits-1)
 
     return n, h
+
+def oracle(x, n, h, memo):
+    if x not in memo.keys():
+        memo[x] = get_nbit_ham_strings(n, h, 1).pop()
+    return memo[x]

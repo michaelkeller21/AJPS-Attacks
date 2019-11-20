@@ -1,5 +1,5 @@
 from util import int2string, string2int
-from gen import get_nbit_ham_strings, get_n_bit_int
+from gen import get_random_int_of_hamming_weight_h, get_n_bit_int, get_nbit_ham_strings
 from random import randrange
 from ham import ham, ham2, hamdist
 from ecc import E, D
@@ -29,6 +29,7 @@ def dec(C, sk, pp = p):
 def keygen(n, h):
     p = 2**n-1
     f, g = get_nbit_ham_strings(n, h, 2)
+
     r = randrange(p//2, p)
 
     t = ((f * r)%p + g) % p
@@ -38,24 +39,25 @@ def keygen(n, h):
 
     return pk, sk, g
 
+if __name__ == "__main__":
 
-m = string2int("The quick brown fox jumps over the lazy dog.")
+    m = string2int("The quick brown fox jumps over the lazy dog.")
 
-(pk, sk, G) = keygen(n, h)
-print("Generating keys...\n")
+    (pk, sk, G) = keygen(n, h)
+    print("Generating keys...\n")
 
-(R, T) = pk
-F = sk
+    (R, T) = pk
+    F = sk
 
-print("\nOriginal message m = ", bin(m))
-C = enc(m, pk)
+    print("\nOriginal message m = ", bin(m))
+    C = enc(m, pk)
 
-print("\nEncrypting message...")
+    print("\nEncrypting message...")
 
 
-m_prime = dec(C, sk) # This is what was decrypted
-print("\nDecrypting message...\n")
+    m_prime = dec(C, sk) # This is what was decrypted
+    print("\nDecrypting message...\n")
 
-print("\nm'= ", bin(m_prime)) # If it works, the output should be the same as the original message.
-print("\nRecovered message, m' in string format: ", int2string(m_prime))
-print("\nHamming distance between m and m': ", hamdist(m, m_prime))
+    print("\nm'= ", bin(m_prime)) # If it works, the output should be the same as the original message.
+    print("\nRecovered message, m' in string format: ", int2string(m_prime))
+    print("\nHamming distance between m and m': ", hamdist(m, m_prime))
