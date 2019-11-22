@@ -12,16 +12,10 @@ pk, sk = keygen(n, h)
 guess = get_nbit_ham_strings(n, h, 1).pop()
 
 
-while ham2(guess//pk) != h:
+while ham2(guess//pk) != h or guess//pk != sk:
     guess = get_nbit_ham_strings(n, h, 1).pop()
 
-    print("potential found")
+print(sk == guess//pk)
 
-    if guess//pk != sk:
-        guess = get_nbit_ham_strings(n, h, 1).pop()
-
-
-
-print("success")
-
-print(sk == guess)
+print(sk, guess)
+print(ham2(sk), ham2(guess))

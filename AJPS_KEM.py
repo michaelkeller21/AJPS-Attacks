@@ -4,8 +4,8 @@ from ham import ham2
 from ecc import E, D
 from AJPS_full import keygen
 
-n = 2500
-h = 256
+n = 2000
+h = 1000
 lam = h
 p = 2**n-1
 rho = 1024

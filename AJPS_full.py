@@ -10,7 +10,9 @@ p = 2**n-1
 lam = h
 rho = 256 # The number of repetitions of a bit
 
-def enc(m, pk, nn = n, hh = h):
+
+
+def enc(m, pk, p, nn = n, hh = h):
     (R, T) = pk
     pp = 2**nn - 1
     A, B1, B2 = get_nbit_ham_strings(hh, nn, 3)
