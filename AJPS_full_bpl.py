@@ -19,11 +19,11 @@ def int_to_bit_position_list(a):
     return acc
 
 
-def int_plus_bpl(a, bpl):
-    return a + bit_position_list_to_int(bpl)
+def int_plus_bpl(a, bpl, p):
+    return a + bit_position_list_to_int(bpl, p)
 
 
-def int_times_bpl(a, bpl, pp = p):
+def int_times_bpl(a, bpl, pp):
     bpl.sort()
     acc = 0
     i = 0
@@ -34,8 +34,8 @@ def int_times_bpl(a, bpl, pp = p):
     return acc
 
 
-def bit_position_list_to_int(bpl):
-    return int_times_bpl(1, bpl)
+def bit_position_list_to_int(bpl, p):
+    return int_times_bpl(1, bpl, p)
 
 
 int2bpl = int_to_bit_position_list
@@ -95,7 +95,7 @@ def keygen(n, h, p, gmpy2=False):
     bplF = get_random_bpl_of_hamming_weight_h(h, n)
     bplG = get_random_bpl_of_hamming_weight_h(h, n)
 
-    T = int_plus_bpl(int_times_bpl(R, bplF), bplG ) % p
+    T = int_plus_bpl(int_times_bpl(R, bplF, p), bplG, p) % p
 
     pk = (R, T)
     sk = bplF
@@ -108,24 +108,24 @@ def keygen(n, h, p, gmpy2=False):
 #-------------------------------------------------------------------------
 # Encrypt and Decrypt
 
-def enc(m, pk, pp, nn = n, hh = h):
+def enc(m, pk, pp, nn, hh, rho):
     (R, T) = pk
 
 
     bplA = get_random_bpl_of_hamming_weight_h(hh, nn)
     bplB1 = get_random_bpl_of_hamming_weight_h(hh, nn)
     bplB2 = get_random_bpl_of_hamming_weight_h(hh, nn)
-    C1 = int_plus_bpl(int_times_bpl(R, bplA), bplB1) %pp
-    C2 = int_plus_bpl(int_times_bpl(T, bplA)%pp, bplB2)%pp ^ E(m)
+    C1 = int_plus_bpl(int_times_bpl(R, bplA, pp), bplB1, pp) %pp
+    C2 = int_plus_bpl(int_times_bpl(T, bplA, pp)%pp, bplB2, pp)%pp ^ E(m, rho)
     return (C1, C2)
 
 
 
-def dec(C, sk, pp = p):
+def dec(C, sk, pp):
     (C1, C2) = C
     bplF = sk
-    C2_star = int_times_bpl(C1, bplF)
-    return D(C2 ^ C2_star)
+    C2_star = int_times_bpl(C1, bplF, pp)
+    return D(C2 ^ C2_star, rho)
 
 
 
