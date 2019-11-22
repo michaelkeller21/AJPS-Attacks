@@ -1,5 +1,5 @@
 from gen import get_nbit_ham_strings
-from ham import ham
+from ham import ham2
 
 def keygen(n, h):
 
@@ -27,7 +27,7 @@ def enc(m, pk, p, n, h):
 
 def dec(c, sk, n, h, signed):
 
-    d = ham((c*sk).to_bytes(n, byteorder="big", signed=signed), n)
+    d = ham2(c*sk)
 
     if d < 4*h**2:
         return 0

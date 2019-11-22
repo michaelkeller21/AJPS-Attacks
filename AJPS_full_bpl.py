@@ -1,5 +1,5 @@
 from random import randrange
-import gmpy2
+from gmpy2 import mpz
 from time import *
 import numpy as np
 from ecc import E, D
@@ -90,7 +90,7 @@ def keygen(n, h, p, gmpy2=False):
 
     R = randrange(p)
 
-    if gmpy2: R = gmpy2.mpz(R)
+    if gmpy2: R = mpz(R)
 
     bplF = get_random_bpl_of_hamming_weight_h(h, n)
     bplG = get_random_bpl_of_hamming_weight_h(h, n)
@@ -121,8 +121,8 @@ def enc(m, pk, pp, nn, hh, rho):
 
 
 
-def dec(C, sk, pp):
-    (C1, C2) = C
+def dec(C, sk, pp, rho):
+    (C1, C2) = C	
     bplF = sk
     C2_star = int_times_bpl(C1, bplF, pp)
     return D(C2 ^ C2_star, rho)
